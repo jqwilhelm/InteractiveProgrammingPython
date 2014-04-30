@@ -1,0 +1,96 @@
+# template for "Guess the number" mini-project
+# input will come from buttons and an input field
+# all output for the game will be printed in the console
+
+import simplegui
+from random import randrange
+from math import log, ceil
+
+# initialize global variables used in your code
+
+magicNumber = 0
+guessLeft = 0
+rangeMax = 100
+
+# helper function to start and restart the game
+
+def new_game():
+    '''
+    Reset game variables and start new game.
+    '''
+    global magicNumber, guessLeft
+    
+    magicNumber = randrange(0, rangeMax)
+    guessLeft = ceil(log(rangeMax, 2))   
+    
+    print
+    print "New Guessing Game"
+    print "Range from 0 to %d" % rangeMax
+    print "Number of guess is %d" % guessLeft
+    
+# define event handlers for control panel
+
+def range100():
+    '''
+    Button that changes range to range [0,100) 
+    and restarts.
+    '''
+    global rangeMax
+    rangeMax = 100
+    new_game()
+
+def range1000():
+    '''
+    Button that changes range to range [0,1000)
+    and restarts.
+    '''
+    global rangeMax
+    rangeMax = 1000
+    new_game()
+        
+def input_guess(guess):
+    '''
+    Main game logic, process users guess and 
+    determine status of game.
+    '''
+    global guessLeft
+    
+    if not guess.isdigit():
+        print '\nNon numeric guess - %s' % guess
+        return
+    
+    output = "\nUser guess was %s  -  %s"
+    guessLeft -= 1
+    
+    if int(guess) == magicNumber:
+        print output % (guess, "Correct!")
+        new_game()
+        return
+    elif int(guess) < magicNumber:
+        print output % (guess, "Higher")
+        print "Number of guess left: %d" % guessLeft
+    else:
+        print output % (guess, "Lower")
+        print "Number of guess left: %d" % guessLeft
+
+    if guessLeft <= 0:
+        print "\nGame over, ran out of guesses!  The number was: %s" % magicNumber
+        new_game()
+    
+# create frame
+
+frame = simplegui.create_frame("Guess the Number", 200, 200)
+
+# register event handlers for control elements
+
+frame.add_button("Number Range: 0 - 100", range100, 200)
+frame.add_button("Number Range: 0 - 1000", range1000, 200)
+frame.add_input("Enter a Guess: ", input_guess, 200)
+
+# call new_game and start frame
+
+new_game()
+
+frame.start()
+
+# always remember to check your completed program against the grading rubric
